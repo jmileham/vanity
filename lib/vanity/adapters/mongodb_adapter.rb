@@ -16,9 +16,17 @@ module Vanity
     # @since 1.4.0
     class MongodbAdapter < AbstractAdapter
       def initialize(options)
-        @mongo = Mongo::Connection.new(options[:host], options[:port], :connect=>false)
         @options = options.clone
-        @options[:database] ||= (@options[:path] && @options[:path].split("/")[1]) || "vanity"
+        if @options[:uri]
+          @mongo = Mongo::Connection.from_uri(options[:uri], :connect=>false)
+        else
+          @mongo = Mongo::Connection.new(options[:host], options[:port], :connect=>false)
+        end
+        if @options[:uri]
+          @options[:database] ||= @options[:uri].split("/").last
+        else
+          @options[:database] ||= (@options[:path] && @options[:path].split("/")[1]) || "vanity"
+        end
         connect!
       end
 
@@ -57,10 +65,10 @@ module Vanity
         @experiments.drop
         @participants.drop
       end
-      
+
 
       # -- Metrics --
-      
+
       def get_metric_last_update_at(metric)
         record = @metrics.find_one(:_id=>metric)
         record && record["last_update_at"]
@@ -83,10 +91,10 @@ module Vanity
       def destroy_metric(metric)
         @metrics.remove :_id=>metric
       end
-      
+
 
       # -- Experiments --
-     
+
       def set_experiment_created_at(experiment, time)
         @experiments.insert :_id=>experiment, :created_at=>time
       end
