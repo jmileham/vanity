@@ -184,7 +184,7 @@ module Vanity
       def chooses
         exp = Vanity.playground.experiment(params[:e])
         exp.chooses(exp.alternatives[params[:a].to_i].value)
-        render :file=>Vanity.template("_experiment"), :locals=>{:experiment=>exp}
+        render :file=>Vanity.template("_experiment"), :locals=>{:experiment=>exp}, :layout=>false
       end
     end
   end

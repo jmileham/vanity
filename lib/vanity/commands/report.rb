@@ -2,11 +2,11 @@ require "erb"
 require "cgi"
 
 module Vanity
-  
+
   # Render method available to templates (when used by Vanity command line,
   # outside Rails).
   module Render
-    
+
     # Render the named template.  Used for reporting and the dashboard.
     def render(path, locals = {})
       locals[:playground] = self
@@ -25,7 +25,7 @@ module Vanity
     def vanity_h(html)
       CGI.escapeHTML(html.to_s)
     end
-    
+
     def vanity_html_safe(text)
       text
     end
